@@ -1,14 +1,39 @@
-# Mr. Robot CTF - TryHackMe Writeup
+# Mr. Robot CTF – TryHackMe Writeup
 
-## Room Information
+## Overview
 
-- **Room:** Mr. Robot CTF
-- **Difficulty:** Medium
-- **Platform:** TryHackMe
+This report documents the compromise of the **Mr. Robot CTF** machine through web enumeration, credential discovery, WordPress exploitation, and privilege escalation via a vulnerable SUID-enabled Nmap binary.
 
-## Objective
+The objective was to identify exposed services, gain initial access to the target system, escalate privileges, and recover all three challenge keys.
 
-Gain access to the target machine, collect all three hidden keys, and escalate privileges to obtain full system compromise.
+---
+
+# Target Information
+
+| Field | Value |
+|---------|---------|
+| Target IP | 10.49.148.221 |
+| Platform | TryHackMe |
+| Room Name | Mr. Robot CTF |
+
+---
+
+# Executive Summary
+
+During the assessment, multiple weaknesses were identified that allowed progression from unauthenticated access to full root compromise.
+
+The attack chain involved:
+
+1. Enumerating the web application.
+2. Discovering sensitive files through `robots.txt`.
+3. Recovering exposed credentials.
+4. Obtaining administrative access to WordPress.
+5. Uploading a PHP reverse shell through the theme editor.
+6. Gaining a shell as the `daemon` user.
+7. Enumerating SUID binaries.
+8. Exploiting a vulnerable SUID-enabled Nmap binary.
+9. Escalating privileges to root.
+10. Recovering all three challenge keys.
 
 ---
 
@@ -74,7 +99,7 @@ The most interesting discoveries were:
 ```text
 /robots.txt
 /license
-/wp-login.php
+/login.php
 ```
 
 ---
@@ -112,18 +137,6 @@ returned the first key:
 ```text
 073403c8a58a1f80d943455fb30724b9
 ```
-
----
-
-# Discovering Credentials
-
-The file:
-
-```text
-/fsocity.dic
-```
-
-contained a large wordlist that appeared to contain usernames and passwords.
 
 Further enumeration led to:
 
